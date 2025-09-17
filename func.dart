@@ -1,6 +1,5 @@
 void main() {
   if (!isChaiAvailable()) {
-    print(isChaiAvailable());
     print("Chai available hai");
   } else {
     print("Chai available nahi hai");
