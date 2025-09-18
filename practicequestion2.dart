@@ -4,7 +4,7 @@ void main() {
 
   numbers.forEach((num) {
     doubleNumbersFunction doubled = doubleNum;
-    print(doubled);
+    print(doubleNum(num));
   });
 }
 
