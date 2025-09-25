@@ -1,0 +1,6 @@
+enum RideStatus {
+  PENDING,
+  ACCEPTED,
+  COMPLETED,
+  CANCELLED,
+}
