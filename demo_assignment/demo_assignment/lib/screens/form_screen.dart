@@ -1,25 +1,40 @@
 import 'package:flutter/material.dart';
 
-class FormScreen extends StatelessWidget {
+class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
+
+  @override
+  State<FormScreen> createState() => _FormScreenState();
+}
+
+class _FormScreenState extends State<FormScreen> {
+  String myTitle = '';
+  TextEditingController titleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Form Screen"),
+        title: const Text("Form Screen"),
       ),
-      body: Column(
-        children: [
-          const TextField(
-            decoration: InputDecoration(hintText: "Title"),
-          ),
-          Spacer(),
-          ElevatedButton(onPressed: onSave, child: Text("Submit"))
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(hintText: "Title"),
+            ),
+            const Spacer(),
+            ElevatedButton(
+                onPressed: () => onSave(context), child: const Text("Submit"))
+          ],
+        ),
       ),
     );
   }
 
-  void onSave() {}
+  void onSave(context) {
+    Navigator.pop(context, titleController.text);
+  }
 }
