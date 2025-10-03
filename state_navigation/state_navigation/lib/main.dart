@@ -26,15 +26,42 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List<String> listData = [];
+  TextEditingController textEditingController =
+      TextEditingController(text: "Hello");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
       ),
-      body: ListView.builder(
-        itemCount: listData.length,
-        itemBuilder: (itemContext, index) => Text("Abc"),
+      body: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: textEditingController,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    listData.add(textEditingController.text);
+                    textEditingController.clear();
+                  });
+                },
+                child: const Text("Add Data"),
+              ),
+            ],
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: listData.length,
+              itemBuilder: (itemContext, index) =>
+                  Text("${index + 1}. ${listData[index]}"),
+            ),
+          ),
+        ],
       ),
     );
   }
