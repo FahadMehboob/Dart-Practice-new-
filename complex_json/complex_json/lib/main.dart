@@ -89,6 +89,7 @@ class _HomeState extends State<Home> {
             subtitle: Text(
                 bookModel?.items?[index].volumeInfo?.authors?.first ??
                     "No Author Name"),
+            trailing: Icon(Icons.info),
           );
         },
       ),
