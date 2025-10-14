@@ -35,19 +35,16 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   BookModel? bookModel;
   bool isLoading = false;
-  @override
-  void initState() {
-    super.initState();
-    _getBooks();
-  }
+  TextEditingController searchKeywordController = TextEditingController();
+  String get searchKeyword => searchKeywordController.text;
 
   _getBooks() async {
     setState(() {
       isLoading = true;
     });
     try {
-      var url =
-          Uri.parse("https://www.googleapis.com/books/v1/volumes?q=flutter");
+      var url = Uri.parse(
+          "https://www.googleapis.com/books/v1/volumes?q=$searchKeyword");
       var response = await http.get(url);
       var responseString = response.body;
       var decodedJson = jsonDecode(responseString) as Map<String, dynamic>;
@@ -56,7 +53,9 @@ class _HomeState extends State<Home> {
         bookModel = BookModel.fromJson(decodedJson);
       });
     } catch (e) {
-      print(e);
+      setState(() {
+        bookModel = null;
+      });
     } finally {
       setState(() {
         isLoading = false;
@@ -70,28 +69,75 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: const Text("Complex Json"),
       ),
-      body: ListView.builder(
-        itemCount: bookModel?.items?.length ?? 0,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: Image.network(
-              (bookModel?.items?[index].volumeInfo?.imageLinks?.thumbnail
-                          ?.isNotEmpty ??
-                      false)
-                  ? bookModel!.items![index].volumeInfo!.imageLinks!.thumbnail!
-                  : "https://via.placeholder.com/150",
-              width: 100,
-              height: 150,
-              fit: BoxFit.cover,
+      body: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: searchKeywordController,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: onSearchBtnPress,
+                child: const Text("Serach"),
+              ),
+            ],
+          ),
+          if (!isLoading)
+            Expanded(
+              child: ListView.builder(
+                itemCount: bookModel?.items?.length ?? 0,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Image.network(
+                      (bookModel?.items?[index].volumeInfo?.imageLinks
+                                  ?.thumbnail?.isNotEmpty ??
+                              false)
+                          ? bookModel!
+                              .items![index].volumeInfo!.imageLinks!.thumbnail!
+                          : "https://via.placeholder.com/150",
+                      width: 100,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                    title: Text(bookModel?.items![index].volumeInfo!.title ??
+                        "No title"),
+                    subtitle: Text(
+                        bookModel?.items?[index].volumeInfo?.authors?.first ??
+                            "No Author Name"),
+                    trailing: const Icon(Icons.info),
+                  );
+                },
+              ),
             ),
-            title:
-                Text(bookModel?.items![index].volumeInfo!.title ?? "No title"),
-            subtitle: Text(
-                bookModel?.items?[index].volumeInfo?.authors?.first ??
-                    "No Author Name"),
-            trailing: Icon(Icons.info),
-          );
-        },
+          if (isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void onSearchBtnPress() => _getBooks();
+}
+
+class BookDetail extends StatelessWidget {
+  final String bookId;
+  const BookDetail({required this.bookId, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Book Detail"),
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Text("Book Title")],
+        ),
       ),
     );
   }
